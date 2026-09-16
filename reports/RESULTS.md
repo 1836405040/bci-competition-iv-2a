@@ -10,13 +10,15 @@ cross-session or cross-subject transfer.
 |---|---:|---:|---:|---:|
 | CSP + shrinkage LDA | 61.54% | 17.66% | S3: 81.96% | S5: 35.37% |
 | CSP + linear SVM | **62.28%** | 17.83% | S3: 83.01% | S5: 36.39% |
-| EEGNet (100 epochs) | 52.31% | 19.01% | S9: 77.42% | S2: 28.82% |
+| EEGNet (100 epochs) | 52.39% | 19.04% | S9: 77.42% | S2: 28.82% |
 
 The chance level is 25%. CSP-SVM was the strongest mean baseline in this run.
 EEGNet did not outperform the classical pipelines, which is plausible for only
 288 trials per subject without augmentation or additional calibration data.
 Subject-level values are preserved in `benchmark_results.csv`; reporting only
 the aggregate mean would hide substantial between-subject variability.
+PyTorch deterministic algorithms were enabled; two consecutive A01 reruns
+produced identical fold summaries.
 
 Commands:
 

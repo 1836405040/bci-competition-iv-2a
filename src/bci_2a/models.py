@@ -42,6 +42,10 @@ def fit_eegnet(X_train, y_train, X_valid, y_valid, *, epochs: int = 100,
     is used only for reporting and early model selection; no preprocessing is fit here.
     """
     torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    torch.use_deterministic_algorithms(True)
+    torch.backends.cudnn.benchmark = False
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     # Fit normalization on the training fold only to avoid validation leakage.
     mean = X_train.mean(axis=(0, 2), keepdims=True)

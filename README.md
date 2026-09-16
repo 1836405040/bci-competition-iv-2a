@@ -51,7 +51,7 @@ python -m bci_2a.experiment --subjects 1 2 3 --models csp-lda --download
 |---|---:|---:|
 | CSP + shrinkage LDA | 61.54% | 17.66% |
 | CSP + linear SVM | **62.28%** | 17.83% |
-| EEGNet（100 epochs） | 52.31% | 19.01% |
+| EEGNet（100 epochs） | 52.39% | 19.04% |
 
 随机水平为 25%。该结果衡量同一受试者、同一训练 session 内的新 trial 泛化，不代表跨 session 或跨受试者泛化。完整逐受试者结果与命令见 [`reports/RESULTS.md`](reports/RESULTS.md)。
 

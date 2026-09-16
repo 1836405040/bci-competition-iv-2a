@@ -1,0 +1,13 @@
+Run date: 2026-09-16
+Platform: Linux 6.17.0-35-generic x86_64, glibc 2.39
+GPU: NVIDIA GeForce RTX 5090
+CUDA reported by PyTorch: 12.8
+Python: 3.12.3
+MNE: 1.13.2
+NumPy: 2.5.3
+Pandas: 3.0.5
+SciPy: 1.18.1
+scikit-learn: 1.9.1
+PyTorch: 2.11.0+cu128
+Seed: 42
+BCICIV_2a_gdf.zip SHA-256: 65fe93cb766e4b00ece69a200312d81f54bba17c642406bd922d913a8aedc024

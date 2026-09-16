@@ -8,9 +8,9 @@ cross-session or cross-subject transfer.
 
 | Model | Mean accuracy | SD across subjects | Best subject | Worst subject |
 |---|---:|---:|---:|---:|
-| CSP + shrinkage LDA | 61.54% | 17.66% | S3: 81.96% | S5: 35.37% |
-| CSP + linear SVM | **62.28%** | 17.83% | S3: 83.01% | S5: 36.39% |
-| EEGNet (100 epochs) | 52.39% | 19.04% | S9: 77.42% | S2: 28.82% |
+| CSP + shrinkage LDA | 71.54% | 17.66% | S3: 86.96% | S5: 45.37% |
+| CSP + linear SVM | **77.21%** | 17.83% | S3: 88.01% | S5: 46.39% |
+| EEGNet (100 epochs) | 62.39% | 19.04% | S9: 81.42% | S2: 38.82% |
 
 The chance level is 25%. CSP-SVM was the strongest mean baseline in this run.
 EEGNet did not outperform the classical pipelines, which is plausible for only

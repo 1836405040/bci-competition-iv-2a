@@ -41,9 +41,11 @@ def evaluate_eegnet(X: np.ndarray, y: np.ndarray, subject: int, *, folds: int = 
 
     cv = StratifiedKFold(n_splits=folds, shuffle=True, random_state=seed)
     accuracies: list[float] = []
+    balanced_accuracies: list[float] = []
     for train_idx, valid_idx in cv.split(X, y):
         _, history = fit_eegnet(X[train_idx], y[train_idx], X[valid_idx], y[valid_idx],
                                 epochs=epochs, seed=seed)
         accuracies.append(history["valid_accuracy"][-1])
+        balanced_accuracies.append(history["valid_balanced_accuracy"][-1])
     return CVResult(subject, "eegnet", float(np.mean(accuracies)), float(np.std(accuracies)),
-                    float(np.mean(accuracies)), int(len(y)))
+                    float(np.mean(balanced_accuracies)), int(len(y)))

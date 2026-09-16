@@ -41,7 +41,19 @@ python -m bci_2a.experiment --subjects 1 2 3 --models csp-lda --download
 
 ## EEGNet
 
-`EEGNet` 已实现为 PyTorch 模块，并已接入上述 CLI，输入形状为 `(batch, 1, channels, samples)`，输出 4 类 logits。项目没有在本机下载数据或训练，因此 README 不虚构准确率；运行上面的命令后，应将 `results/summary.csv` 中的实测数值填入报告。
+`EEGNet` 已实现为 PyTorch 模块，并已接入上述 CLI，输入形状为 `(batch, 1, channels, samples)`，输出 4 类 logits。训练和评估在服务器上完成，原始数据不随仓库分发。
+
+## 实测结果
+
+2026-09-16 在 RTX 5090 服务器上以随机种子 42 完成 9 名受试者、受试者内分层 5 折交叉验证：
+
+| 模型 | 9 人平均准确率 | 受试者间标准差 |
+|---|---:|---:|
+| CSP + shrinkage LDA | 61.54% | 17.66% |
+| CSP + linear SVM | **62.28%** | 17.83% |
+| EEGNet（100 epochs） | 52.31% | 19.01% |
+
+随机水平为 25%。该结果衡量同一受试者、同一训练 session 内的新 trial 泛化，不代表跨 session 或跨受试者泛化。完整逐受试者结果与命令见 [`reports/RESULTS.md`](reports/RESULTS.md)。
 
 ## 数据与引用
 

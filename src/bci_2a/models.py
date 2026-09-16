@@ -56,7 +56,7 @@ def fit_eegnet(X_train, y_train, X_valid, y_valid, *, epochs: int = 100,
     loader = DataLoader(TensorDataset(X_train, y_train), batch_size=batch_size, shuffle=True)
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     loss_fn = nn.CrossEntropyLoss()
-    history = {"train_loss": [], "valid_accuracy": []}
+    history = {"train_loss": [], "valid_accuracy": [], "valid_balanced_accuracy": []}
     for _ in range(epochs):
         model.train()
         losses = []
@@ -68,7 +68,14 @@ def fit_eegnet(X_train, y_train, X_valid, y_valid, *, epochs: int = 100,
             losses.append(float(loss.detach().cpu()))
         model.eval()
         with torch.no_grad():
-            accuracy = float((model(X_valid).argmax(1) == y_valid).float().mean().cpu())
+            predictions = model(X_valid).argmax(1)
+            accuracy = float((predictions == y_valid).float().mean().cpu())
+            recalls = [
+                (predictions[y_valid == label] == label).float().mean()
+                for label in torch.unique(y_valid)
+            ]
+            balanced_accuracy = float(torch.stack(recalls).mean().cpu())
         history["train_loss"].append(sum(losses) / max(len(losses), 1))
         history["valid_accuracy"].append(accuracy)
+        history["valid_balanced_accuracy"].append(balanced_accuracy)
     return model, history

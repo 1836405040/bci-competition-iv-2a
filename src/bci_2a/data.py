@@ -3,18 +3,20 @@
 from __future__ import annotations
 
 from pathlib import Path
-from urllib.request import urlretrieve
+from urllib.request import urlopen
+from zipfile import ZipFile
 
 import mne
 import numpy as np
 
-BASE_URL = "https://bnci-horizon-2020.eu/database/data-sets/001-2014"
+ARCHIVE_URL = "https://www.bbci.de/competition/download/competition_iv/BCICIV_2a_gdf.zip"
+ARCHIVE_NAME = "BCICIV_2a_gdf.zip"
 CLASS_EVENT_CODES = {"769": "left_hand", "770": "right_hand", "771": "feet", "772": "tongue"}
 CLASS_NAMES = tuple(CLASS_EVENT_CODES.values())
 
 
 def download_subject(subject: int, root: str | Path, session: str = "T") -> Path:
-    """Download one training (T) or evaluation (E) file if it is absent."""
+    """Download the official archive once and extract one GDF file safely."""
     if not 1 <= subject <= 9:
         raise ValueError("subject must be in [1, 9]")
     session = session.upper()
@@ -24,7 +26,20 @@ def download_subject(subject: int, root: str | Path, session: str = "T") -> Path
     root.mkdir(parents=True, exist_ok=True)
     path = root / f"A{subject:02d}{session}.gdf"
     if not path.exists():
-        urlretrieve(f"{BASE_URL}/{path.name}", path)
+        archive = root / ARCHIVE_NAME
+        if not archive.exists():
+            partial = archive.with_suffix(".zip.part")
+            with urlopen(ARCHIVE_URL, timeout=60) as response, partial.open("wb") as output:
+                while chunk := response.read(1024 * 1024):
+                    output.write(chunk)
+            partial.replace(archive)
+        with ZipFile(archive) as bundle:
+            candidates = [name for name in bundle.namelist() if Path(name).name == path.name]
+            if len(candidates) != 1:
+                raise RuntimeError(f"Expected one {path.name} in {archive}, found {len(candidates)}")
+            with bundle.open(candidates[0]) as source, path.open("wb") as output:
+                while chunk := source.read(1024 * 1024):
+                    output.write(chunk)
     return path
 
 

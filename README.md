@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 ## 下载数据并运行经典模型
 
-数据文件来自 BNCI Horizon 2020 的公开镜像，命名为 `A01T.gdf` 到 `A09T.gdf`。运行时才下载，不把数据提交到 Git：
+数据文件来自 BCI Competition IV 官方公开归档，命名为 `A01T.gdf` 到 `A09T.gdf`。第一次运行会缓存约 440 MB 的 `BCICIV_2a_gdf.zip`，之后按需解压；数据不提交到 Git：
 
 ```bash
 python -m bci_2a.experiment --download --data-root data --output results

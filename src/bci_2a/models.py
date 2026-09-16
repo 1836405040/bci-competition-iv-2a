@@ -43,6 +43,11 @@ def fit_eegnet(X_train, y_train, X_valid, y_valid, *, epochs: int = 100,
     """
     torch.manual_seed(seed)
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+    # Fit normalization on the training fold only to avoid validation leakage.
+    mean = X_train.mean(axis=(0, 2), keepdims=True)
+    std = X_train.std(axis=(0, 2), keepdims=True) + 1e-6
+    X_train = (X_train - mean) / std
+    X_valid = (X_valid - mean) / std
     X_train = torch.as_tensor(X_train, dtype=torch.float32).unsqueeze(1)
     y_train = torch.as_tensor(y_train, dtype=torch.long)
     X_valid = torch.as_tensor(X_valid, dtype=torch.float32).unsqueeze(1).to(device)

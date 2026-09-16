@@ -1,4 +1,5 @@
 import numpy as np
+import mne
 from zipfile import ZipFile
 
 from bci_2a import data
@@ -22,3 +23,12 @@ def test_download_subject_extracts_cached_archive(tmp_path):
         bundle.writestr("BCICIV_2a_gdf/A01T.gdf", b"gdf-content")
     path = data.download_subject(1, tmp_path)
     assert path.read_bytes() == b"gdf-content"
+
+
+def test_eog_channels_are_not_part_of_competition_eeg_set():
+    names = [f"EEG-{index}" for index in range(22)] + ["EOG-left", "EOG-right", "EOG-central"]
+    info = mne.create_info(names, 250, ch_types="eeg")
+    raw = mne.io.RawArray(np.zeros((25, 10)), info, verbose="ERROR")
+    eog = [name for name in raw.ch_names if "EOG" in name.upper()]
+    raw.drop_channels(eog).pick("eeg")
+    assert len(raw.ch_names) == 22

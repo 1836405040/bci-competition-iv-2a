@@ -65,8 +65,13 @@ def load_subject(path: str | Path, *, tmin: float = 0.5, tmax: float = 2.5,
     Only the four motor-imagery event codes are retained; rejected/unknown events are ignored.
     """
     raw = mne.io.read_raw_gdf(path, preload=True, verbose="ERROR")
-    # Keep EEG only and remove common non-EEG channels (EOG, trigger, etc.).
+    # MNE's GDF reader labels the three EOG channels as EEG in this dataset,
+    # so exclude them by name before selecting the 22 competition EEG channels.
+    eog_channels = [name for name in raw.ch_names if "EOG" in name.upper()]
+    raw.drop_channels(eog_channels)
     raw.pick(picks="eeg")
+    if len(raw.ch_names) != 22:
+        raise RuntimeError(f"Expected 22 EEG channels after dropping EOG, found {len(raw.ch_names)}")
     raw.filter(l_freq, h_freq, method="fir", phase="zero-double", verbose="ERROR")
     event_id = _find_event_id(raw)
     events, event_codes = mne.events_from_annotations(raw, event_id={str(v): v for v in event_id.values()}, verbose="ERROR")
